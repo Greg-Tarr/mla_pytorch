@@ -1,0 +1,25 @@
+[project]
+name = "mla_pytorch"
+version = "0.1.0"
+description = "Simple implementation of Multi Latent Attention from the Deepseek V2 paper"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.2.2",
+    "torch<=2.7.0.dev20250118",
+]
+
+[tool.uv]
+prerelease = "allow"
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu124"}
+torchvision =  { index = "pytorch-cu124"}
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/nightly/cu124"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
