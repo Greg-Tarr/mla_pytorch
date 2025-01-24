@@ -24,12 +24,6 @@ from torch.nn.attention.flex_attention import (
 )
 
 
-
-
-def norm(x: torch.Tensor) -> torch.Tensor:
-    return F.rms_norm(x, (x.size(-1),))
-
-
 class Rotary(nn.Module):
     def __init__(self, dim: int, base: int = 10000):
         super().__init__()
