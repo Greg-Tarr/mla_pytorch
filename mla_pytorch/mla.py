@@ -24,6 +24,8 @@ from torch.nn.attention.flex_attention import (
 )
 
 
+
+
 def norm(x: torch.Tensor) -> torch.Tensor:
     return F.rms_norm(x, (x.size(-1),))
 
@@ -109,13 +111,12 @@ class MLAttention(nn.Module):
         q = torch.cat([q, q_r], dim=-1)
         k = torch.cat([k, k_r], dim=-1)
 
-        # Scale and Attention
-        causal_mask = torch.triu(torch.ones((T, T), dtype=torch.bool, device=x.device), diagonal=1)
-        y = torch.nn.functional.scaled_dot_product_attention(
-            q, k, v,
-            attn_mask=causal_mask
+        # Mask & Attention
+        block_mask = create_block_mask( # TODO: add kv cache
+            causal_mod, B=None, H=None, Q_LEN=q.size(2), KV_LEN=k.size(2)
         )
-        y = y.transpose(1, 2).reshape(B, T, C)
+        y = flex_attention(q, k, v, block_mask=block_mask)
+        y = y.transpose(1, 2).contiguous().view_as(x)
 
         # Project output
         out = self.W_o(y)
