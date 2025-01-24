@@ -23,10 +23,8 @@ from torch.nn.attention.flex_attention import (
     create_block_mask,
 )
 
-Tensor = torch.Tensor
 
-
-def norm(x):
+def norm(x: torch.Tensor) -> torch.Tensor:
     return F.rms_norm(x, (x.size(-1),))
 
 
@@ -35,7 +33,7 @@ class Rotary(nn.Module):
         super().__init__()
         self.register_buffer("inv_freq", (1 / base) ** (torch.arange(0, dim, 2) / dim))
 
-    def forward(self, x: Tensor):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         T = x.shape[1]
         t = torch.arange(T, device=x.device)
         freqs = torch.outer(t, self.inv_freq)
@@ -79,7 +77,7 @@ class MLAttention(nn.Module):
 
         self.W_o = nn.Linear(self.d_model, self.d_model)
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         B, T, C = x.size()
 
         # Q Projections
